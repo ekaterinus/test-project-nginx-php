@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./index.html:/usr/share/nginx/html/index.html
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: '100m'
+        max-file: '3'
+    networks:
+      - test-network
+
+  php:
+    image: php:8.2-fpm
+    volumes:
+      - ./index.php:/var/www/html/index.php
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: '100m'
+        max-file: '3'
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: overlay
